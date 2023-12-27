@@ -1,5 +1,5 @@
 <script setup>
-import { ref, reactive, onMounted, getCurrentInstance, toRaw } from 'vue';
+import { ref, reactive, onMounted, toRaw } from 'vue';
 import dayjs from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
 import { useQuasar } from 'quasar';
@@ -51,25 +51,59 @@ const state = reactive({
   rows: []
 });
 
-const { proxy } = getCurrentInstance();
+const originData = ref({
+  members: [
+    {
+      name: 'Joe是藥對決',
+      cellphone: '0987654321',
+      gender: '男',
+      email: 'joeman@gmail.com',
+      birthday: '1990-2-28T15:00:00.000-07:00'
+    },
+    {
+      name: '小能維尼',
+      cellphone: '0978123456',
+      gender: '男',
+      email: 'PoohBeer@gmail.com.tw',
+      birthday: '1921-8-21T00:00:00.000Z'
+    },
+    {
+      name: '雜魚師匠',
+      cellphone: '091212323241415',
+      gender: '男',
+      email: 'hanmaakanmaa@gmail.com',
+      birthday: '1999-12-31T18:00:31.000Z'
+    },
+    {
+      name: '苗栗小五郎',
+      cellphone: '0223321124',
+      gender: '女',
+      email: 'kkk@yahoo.com.tw',
+      birthday: '2030-03-04T00:00:00.000Z'
+    },
+    {
+      name: '王小明',
+      cellphone: '03-3589-9080',
+      gender: '女',
+      email: 'min@gmail.com',
+      birthday: '1990-12-12T12:12:12.121Z'
+    }
+  ]
+});
+
 const getData = async () => {
-  // get http://35.194.177.50:7777/members
-  try {
-    const response = await proxy.$api.get('/members');
+  const dateFormate = (date) => {
+    const data = dayjs(date, 'YYYY-M-DTHH:mm:ss.SSSZ');
+    return data.format('YYYY-MM-DD');
+  };
 
-    const dateFormate = (date) => {
-      const data = dayjs(date, 'YYYY-M-DTHH:mm:ss.SSSZ');
-      return data.format('YYYY-MM-DD');
-    };
+  const formatData = originData.value.members.map((item) => {
+    const newItem = { ...item, birthday: dateFormate(item.birthday) };
+    return newItem;
+  });
 
-    response.data.members.forEach((item) => {
-      item.birthday = dateFormate(item.birthday);
-    });
-    localStorage.setItem('tableData', JSON.stringify(response.data.members));
-    state.rows = response.data.members;
-  } catch (error) {
-    console.err(error);
-  }
+  localStorage.setItem('tableData', JSON.stringify(formatData));
+  state.rows = formatData;
 };
 
 // 新增資料
@@ -78,8 +112,10 @@ const addDialogState = ref(false);
 const isDialogOpen = () => {
   addDialogState.value = false;
 };
+const pushComplete = ref(false);
 
-const pushData = async (data) => {
+const pushData = (data) => {
+  pushComplete.value = false;
   const localData = JSON.parse(localStorage.getItem('tableData'));
   localData.unshift(data);
   localStorage.setItem('tableData', JSON.stringify(localData));
@@ -198,6 +234,7 @@ onMounted(() => {
       </div>
       <AddDialog
         v-model="addDialogState"
+        :pushState="pushComplete"
         @cancel="isDialogOpen"
         @submit="pushData"
       />

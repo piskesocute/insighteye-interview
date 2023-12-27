@@ -1,11 +1,23 @@
 <script setup>
-import { ref, reactive, defineEmits } from 'vue';
+import { ref, reactive, defineEmits, watch, defineProps, nextTick } from 'vue';
 import dayjs from 'dayjs';
+const props = defineProps({
+  pushState: Boolean
+});
 
 const emit = defineEmits(['cancel', 'submit']);
 
 const addDialogState = ref(false);
 
+watch(
+  () => props.pushState,
+  (val) => {
+    if (val) {
+      reset();
+    }
+  }
+);
+// reset();
 const data = reactive({
   name: '',
   cellphone: '',
@@ -24,12 +36,13 @@ const reset = () => {
   data.name = '';
   data.cellphone = '';
   data.email = '';
-  data.gender = '';
+  data.gender = 'male';
   data.birthday = dayjs().format('YYYY-MM-DD HH:mm');
 };
 
-const onSubmit = () => {
-  emit('submit', data);
+const onSubmit = async () => {
+  const pushData = { ...data };
+  emit('submit', pushData);
   reset();
   addDialogState.value = false;
 };
