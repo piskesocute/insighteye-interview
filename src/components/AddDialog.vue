@@ -22,14 +22,14 @@ const data = reactive({
   name: '',
   cellphone: '',
   email: '',
-  gender: 'male',
+  gender: '男',
   birthday: dayjs().format('YYYY-MM-DD HH:mm')
 });
 
 const sexOption = [
-  { label: '男', value: 'male' },
-  { label: '女', value: 'female' },
-  { label: '其他', value: 'other' }
+  { label: '男', value: '男' },
+  { label: '女', value: '女' },
+  { label: '其他', value: '其他' }
 ];
 
 const reset = () => {
@@ -68,6 +68,7 @@ const cancel = () => {
                 <q-input
                   v-model="data.name"
                   label="姓名"
+                  placeholder="王大明"
                   lazy-rules
                   :rules="[
                     (val) => (val && val.length > 0) || '姓名欄位為必填',
@@ -77,11 +78,14 @@ const cancel = () => {
               </div>
               <div class="col-12 col-md-6">
                 <q-input
-                  v-model="data.cellphone"
+                  v-model.number="data.cellphone"
+                  type="tel"
                   label="手機"
                   lazy-rules
+                  placeholder="0912345678"
                   :rules="[
                     (val) => (val && val.length > 0) || '手機號碼欄位為必填',
+                    (val) => !isNaN(val) || '手機號碼須為數字',
                     (val) => /^09\d{8}$/.test(val) || '手機號碼須為10碼'
                   ]"
                 />
@@ -89,7 +93,9 @@ const cancel = () => {
               <div class="col-12">
                 <q-input
                   v-model="data.email"
+                  type="email"
                   label="電子信箱"
+                  placeholder="example@gmail.com"
                   lazy-rules
                   :rules="[
                     (val) => (val && val.length > 0) || '信箱欄位為必填',
@@ -167,6 +173,7 @@ const cancel = () => {
                           v-model="data.birthday"
                           mask="YYYY-MM-DD HH:mm"
                           format24h
+                          @update:modelValue="$refs.qTimeProxy.hide()"
                         >
                           <div class="row items-center justify-end">
                             <q-btn
@@ -186,8 +193,12 @@ const cancel = () => {
           </div>
         </q-card-section>
         <q-card-actions align="right">
-          <q-btn label="取消" color="primary" @click="cancel" />
-          <q-btn label="送出" color="primary" type="submit" />
+          <q-btn class="q-mr-md" color="primary" @click="cancel" outline
+            ><span class="q-px-sm">取消</span></q-btn
+          >
+          <q-btn color="primary" type="submit">
+            <span class="q-px-sm">送出</span>
+          </q-btn>
         </q-card-actions>
       </q-form>
     </q-card>
