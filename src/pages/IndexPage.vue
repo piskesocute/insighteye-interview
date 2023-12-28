@@ -1,11 +1,12 @@
 <script setup>
-import { ref, reactive, onMounted, toRaw } from 'vue';
+import { ref, reactive, onMounted, toRaw, getCurrentInstance } from 'vue';
 import dayjs from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
 import { useQuasar } from 'quasar';
 import AddDialog from '../components/AddDialog.vue';
 import QTable from '../components/QTable.vue';
 import DeleteDialog from '../components/DeleteDialog.vue';
+import ListData from '../assets/data/listData.json';
 
 dayjs.extend(customParseFormat);
 
@@ -91,19 +92,42 @@ const originData = ref({
   ]
 });
 
+const { proxy } = getCurrentInstance();
+
+const getAPIData = async () => {
+  try {
+    const res = await proxy.$api.get('/members');
+    originData.value = res.data.members;
+  } catch (error) {
+    console.log(error);
+  }
+};
+const getLocalData = () => {
+  originData.value = ListData;
+};
+
 const getData = async () => {
+  // 如果再開發環境則使用API"http://35.194.177.50:7777/members"來取得資料
+  // 如果再github page則使用本地端的json檔案ListData來取得資料
+  if (process.env.NODE_ENV === 'development') {
+    await getAPIData();
+  } else {
+    originData.value = ListData.data.members;
+  }
+
+  console.log('originData.value', originData.value);
+
   const dateFormate = (date) => {
     const data = dayjs(date, 'YYYY-M-DTHH:mm:ss.SSSZ');
-    return data.format('YYYY-MM-DD');
+    return data.format('YYYY-MM-DD HH:mm');
   };
 
-  const formatData = originData.value.members.map((item) => {
-    const newItem = { ...item, birthday: dateFormate(item.birthday) };
-    return newItem;
+  originData.value.forEach((item) => {
+    item.birthday = dateFormate(item.birthday);
   });
 
-  localStorage.setItem('tableData', JSON.stringify(formatData));
-  state.rows = formatData;
+  localStorage.setItem('tableData', JSON.stringify(originData.value));
+  state.rows = originData.value;
 };
 
 // 新增資料
