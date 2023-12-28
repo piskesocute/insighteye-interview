@@ -67,7 +67,7 @@ const getAPIData = async () => {
     const res = await proxy.$api.get('/members');
     originData.value = res.data.members;
   } catch (error) {
-    console.log(error);
+    console.err(error);
   }
 };
 
@@ -77,11 +77,11 @@ const getData = async () => {
   if (process.env.NODE_ENV === 'development') {
     await getAPIData();
   } else {
-    originData.value = [...ListData.data.members];
+    originData.value = ListData.data.members;
   }
 
   const dateFormate = (date) => {
-    const data = dayjs(date);
+    const data = dayjs(date, 'YYYY-MM-DD HH:mm');
     return data.format('YYYY-MM-DD HH:mm');
   };
 
@@ -112,7 +112,7 @@ const pushData = (data) => {
     textColor: 'white',
     icon: 'check',
     message: '資料已成功新增',
-    position: 'top-right',
+    position: 'bottom-right',
     timeout: 3000,
     actions: [
       {
@@ -158,7 +158,7 @@ const deleteData = async () => {
     textColor: 'white',
     icon: 'check',
     message: '資料已成功刪除',
-    position: 'top-right',
+    position: 'bottom-right,',
     timeout: 3000,
     actions: [
       {
@@ -177,7 +177,7 @@ const resetData = () => {
     textColor: 'white',
     icon: 'check',
     message: '資料已成功重置',
-    position: 'top-right',
+    position: 'bottom-right',
     timeout: 3000,
     actions: [
       {
