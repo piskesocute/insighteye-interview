@@ -74,7 +74,7 @@ const getAPIData = async () => {
 const getData = async () => {
   // 如果再開發環境則使用API"http://35.194.177.50:7777/members"來取得資料
   // 如果再github page則使用本地端的json檔案ListData來取得資料
-  if (process.env.NODE_ENV !== 'development') {
+  if (process.env.NODE_ENV === 'development') {
     await getAPIData();
   } else {
     originData.value = [...ListData.data.members];
