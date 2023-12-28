@@ -47,7 +47,8 @@ module.exports = configure(function (ctx) {
       vueRouterMode: 'hash', // available values: 'hash', 'history'
 
       // transpile: false,
-      // publicPath: '/insighteye-interview/',
+      // 如果再開發環境則路徑為 /，如果再生產環境則路徑為 /insighteye-interview/
+      publicPath: ctx.dev ? '/' : '/insighteye-interview/',
 
       // Add dependencies for transpiling with Babel (Array of string/regex)
       // (from node_modules, which are by default not transpiled).
