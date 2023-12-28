@@ -52,47 +52,15 @@ const state = reactive({
   rows: []
 });
 
-const originData = ref({
-  members: [
-    {
-      name: 'Joe是藥對決',
-      cellphone: '0987654321',
-      gender: '男',
-      email: 'joeman@gmail.com',
-      birthday: '1990-2-28T15:00:00.000-07:00'
-    },
-    {
-      name: '小能維尼',
-      cellphone: '0978123456',
-      gender: '男',
-      email: 'PoohBeer@gmail.com.tw',
-      birthday: '1921-8-21T00:00:00.000Z'
-    },
-    {
-      name: '雜魚師匠',
-      cellphone: '091212323241415',
-      gender: '男',
-      email: 'hanmaakanmaa@gmail.com',
-      birthday: '1999-12-31T18:00:31.000Z'
-    },
-    {
-      name: '苗栗小五郎',
-      cellphone: '0223321124',
-      gender: '女',
-      email: 'kkk@yahoo.com.tw',
-      birthday: '2030-03-04T00:00:00.000Z'
-    },
-    {
-      name: '王小明',
-      cellphone: '03-3589-9080',
-      gender: '女',
-      email: 'min@gmail.com',
-      birthday: '1990-12-12T12:12:12.121Z'
-    }
-  ]
-});
-
+const originData = ref({});
 const { proxy } = getCurrentInstance();
+
+const darkModeBtn = ref(false);
+const toggleDarkMode = () => {
+  // 取得當前的dark mode狀態
+  $q.dark.toggle();
+  darkModeBtn.value = $q.dark.isActive;
+};
 
 const getAPIData = async () => {
   try {
@@ -102,23 +70,18 @@ const getAPIData = async () => {
     console.log(error);
   }
 };
-const getLocalData = () => {
-  originData.value = ListData;
-};
 
 const getData = async () => {
   // 如果再開發環境則使用API"http://35.194.177.50:7777/members"來取得資料
   // 如果再github page則使用本地端的json檔案ListData來取得資料
-  if (process.env.NODE_ENV === 'development') {
+  if (process.env.NODE_ENV !== 'development') {
     await getAPIData();
   } else {
-    originData.value = ListData.data.members;
+    originData.value = [...ListData.data.members];
   }
 
-  console.log('originData.value', originData.value);
-
   const dateFormate = (date) => {
-    const data = dayjs(date, 'YYYY-M-DTHH:mm:ss.SSSZ');
+    const data = dayjs(date);
     return data.format('YYYY-MM-DD HH:mm');
   };
 
@@ -226,6 +189,9 @@ const resetData = () => {
 };
 
 onMounted(() => {
+  const isDark = $q.dark.isActive;
+  darkModeBtn.value = isDark;
+
   if (!localStorage.getItem('tableData')) {
     getData();
   } else {
@@ -254,6 +220,15 @@ onMounted(() => {
             @click="deleteDialogState = true"
           />
           <q-btn outline color="positive" label="重置資料" @click="resetData" />
+          <q-toggle
+            v-model="darkModeBtn"
+            size="lg"
+            :color="$q.dark.isActive ? 'yellow-9' : 'grey'"
+            checked-icon="mdi-weather-night"
+            unchecked-icon="mdi-white-balance-sunny"
+            :icon-color="$q.dark.isActive ? 'white' : 'black'"
+            @click="toggleDarkMode"
+          />
         </div>
       </div>
       <AddDialog
