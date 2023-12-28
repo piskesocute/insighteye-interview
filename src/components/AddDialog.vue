@@ -17,7 +17,7 @@ watch(
     }
   }
 );
-// reset();
+
 const data = reactive({
   name: '',
   cellphone: '',
@@ -36,7 +36,7 @@ const reset = () => {
   data.name = '';
   data.cellphone = '';
   data.email = '';
-  data.gender = 'male';
+  data.gender = '男';
   data.birthday = dayjs().format('YYYY-MM-DD HH:mm');
 };
 
@@ -66,7 +66,7 @@ const cancel = () => {
             <div class="row q-col-gutter-md">
               <div class="col-12 col-md-6">
                 <q-input
-                  v-model="data.name"
+                  v-model.trim="data.name"
                   label="姓名"
                   placeholder="王大明"
                   lazy-rules
@@ -78,7 +78,7 @@ const cancel = () => {
               </div>
               <div class="col-12 col-md-6">
                 <q-input
-                  v-model.number="data.cellphone"
+                  v-model.trim="data.cellphone"
                   type="tel"
                   label="手機"
                   lazy-rules
@@ -92,7 +92,7 @@ const cancel = () => {
               </div>
               <div class="col-12">
                 <q-input
-                  v-model="data.email"
+                  v-model.trim="data.email"
                   type="email"
                   label="電子信箱"
                   placeholder="example@gmail.com"
@@ -119,7 +119,7 @@ const cancel = () => {
               <div class="col-12">
                 <q-input
                   outlined
-                  v-model="data.birthday"
+                  v-model.trim="data.birthday"
                   label="生日"
                   :rules="[
                     (val) => {
