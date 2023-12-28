@@ -55,7 +55,7 @@ watch(
         dense
         debounce="300"
         v-model="filter"
-        placeholder="請輸入你希望搜尋的欄位"
+        placeholder="...想找什麼?"
       >
         <template v-slot:append>
           <q-icon name="search" />
