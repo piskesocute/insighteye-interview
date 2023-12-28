@@ -49,3 +49,8 @@ Thumbs.db
 *.wmv
 
 
+/.quasar/app.js
+/.quasar/artifacts.json
+/.quasar/client-entry.js
+/.quasar/client-prefetch.js
+/.quasar/quasar-user-options.js
